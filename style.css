@@ -157,7 +157,6 @@ html, body {
 
 .game-board__field {
     background: var(--secondary);
-    border: 1px solid var(--grey);
     border-radius: 10%;
     box-shadow: 2px 2px 20px 10px rgba(0, 0, 0, 0.452);
     display: flex;

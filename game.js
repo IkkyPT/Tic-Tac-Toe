@@ -13,10 +13,16 @@ const GameBoard = (() => {
             const row = Math.floor(index / 3);
             const col = index % 3;
             square.addEventListener('click', () => {
-                // Switch the player and get the new mark
-                const mark = Game.switchPlayers();
-                // For each square clicked calls the placeMarker function
-                placeMarker(row, col, mark);
+                if (square.textContent === ''){ // Interrupt users of replace the marker already exist in board
+                    // Switch the player and get the new mark
+                    const mark = Game.switchPlayers();
+                    // For each square clicked calls the placeMarker function
+                    placeMarker(row, col, mark);
+                    // Check Win conditions
+                    Game.checkWin();
+                    // Update next player turn
+                    Game.updateTurn();
+                }
             });
         });
     }
@@ -29,7 +35,8 @@ const GameBoard = (() => {
 
     return {
         render,
-        placeMarker
+        placeMarker,
+        gameBoard
     }
 })();
 
@@ -67,14 +74,16 @@ const GameProperties = (() => {
 const Game = (() => {
     // Game control variables
     let players = [];
-    let currPlayerIndex = 0;
+    let currPlayerIndex;
     let gameOver;
+    let turn = 0;
 
     // Start the game function
     const start = () => {
         // Check Player1 mark and assign the other one to Player2
         const mark1 = GameProperties.getPlayerMark();
         const mark2 = mark1 === 'X' ? 'O' : 'X';
+        // Create the players
         players = [
             GameProperties.createPlayer("player1", mark1),
             GameProperties.createPlayer("player2", mark2)
@@ -85,13 +94,67 @@ const Game = (() => {
     }
 
     const switchPlayers = () => {
-        currPlayerIndex = currPlayerIndex === 0 ? 1 : 0;
-        return players[currPlayerIndex].mark;
+        if (turn == 0) {
+            turn++;
+            return players[currPlayerIndex].mark
+        }
+        else {
+            currPlayerIndex = currPlayerIndex === 0 ? 1 : 0;
+            return players[currPlayerIndex].mark;
+        }
+    }
+
+    // Display next mark to be placed
+    const updateTurn = () => {
+        const markTurn = document.querySelector('.marker-type');
+        nextMark = currPlayerIndex === 0 ? 1 : 0;
+        markTurn.textContent = players[nextMark].mark;
+    }
+
+    // Check win conditions
+    const checkWin = () => {
+
+        const mark = players[currPlayerIndex].mark;
+        
+        // Check Rows
+        for (let i = 0; i < 3; i++){
+            if (GameBoard.gameBoard[i][0] === mark && GameBoard.gameBoard[i][1] === mark && GameBoard.gameBoard[i][2] === mark){
+                gameOver = true;
+                return console.log('win');
+                return true;
+            }
+        }
+
+        // Check Columns
+        for (let i = 0; i < 3; i++){
+            if (GameBoard.gameBoard[0][i] === mark && GameBoard.gameBoard[1][i] === mark && GameBoard.gameBoard[2][i] === mark){
+                gameOver = true;
+                return console.log('win');
+                return true;
+            }
+        }
+
+        // Check Diagonals
+        if (GameBoard.gameBoard[0][0] === mark && GameBoard.gameBoard[1][1] === mark && GameBoard.gameBoard[2][2] === mark) {
+            gameOver = true;
+            return console.log('win');
+            return true;
+        }
+        if (GameBoard.gameBoard[0][2] === mark && GameBoard.gameBoard[1][1] === mark && GameBoard.gameBoard[2][0] === mark) {
+            gameOver = true;
+            return console.log('win');
+            return true;
+        }
+
+        // No win condition met 
+        return false;
     }
 
     return {
         start,
-        switchPlayers
+        switchPlayers,
+        updateTurn,
+        checkWin
     }
 })();
 
