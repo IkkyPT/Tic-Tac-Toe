@@ -6,6 +6,7 @@
     --grey: #A9BEC8;
     --dark-cyan: #34C3BE;
     --lighten-yellow: #F2B138;
+    --lighten-black: #000000d2;
 }
 
 html, body {
@@ -188,33 +189,41 @@ html, body {
     width: 100%;
     border-radius: 10px;
     display: flex;
-    flex-direction: column;
+    gap: 0.5rem;
     justify-content: center;
     align-items: center;
     padding: 5px;
+    font-size: calc(1.1rem + 0.5vw);
+    color: var(--grey);
 }
 
-.game-bottom > div > p, h2 {
-    margin: 0;
+.game-bottom > div:hover {
+    transform: scale(1.5);
+    transition: all 1s ease;
 }
 
-.game-bottom > div > h2 {
-    font-weight: 400;
-    font-size: calc(0.5rem + 0.5vw);
+
+.game-over {
+    grid-column: 1 / 4;
+    grid-row: 2 / 2;
+    display: none;
+    flex-direction: column;
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    background: var(--lighten-black);
+    color: #A9BEC8;
+    height: 350px;
+    margin: auto 0;
+    font-size: 3rem;
 }
 
-.game-bottom > div > p {
-    font-size: calc(1rem + 0.5vw);
-}
-
-.playerXinfo {
-    background-color: var(--dark-cyan);
-}
-
-.playerOinfo {
-    background: var(--lighten-yellow);
-}
-
-.tieInfo {
+.play-again {
+    font-size: 2rem;
+    border-radius: 10px;
     background: var(--grey);
+    border: none;
+    padding: 10px 20px;
+    font-weight: bolder;
 }

@@ -19,9 +19,10 @@ const GameBoard = (() => {
                     // For each square clicked calls the placeMarker function
                     placeMarker(row, col, mark);
                     // Check Win conditions
-                    Game.checkWin();
+                    Game.winCondition();
                     // Update next player turn
                     Game.updateTurn();
+                    Game.checkWin();
                 }
             });
         });
@@ -111,55 +112,97 @@ const Game = (() => {
         markTurn.textContent = players[nextMark].mark;
     }
 
-    // Check win conditions
-    const checkWin = () => {
+    const winCondition = () => {
 
         const mark = players[currPlayerIndex].mark;
-        
+        let isTie = true;
+      
         // Check Rows
-        for (let i = 0; i < 3; i++){
-            if (GameBoard.gameBoard[i][0] === mark && GameBoard.gameBoard[i][1] === mark && GameBoard.gameBoard[i][2] === mark){
-                gameOver = true;
-                return console.log('win');
-                return true;
-            }
+        for (let i = 0; i < 3; i++) {
+          if (GameBoard.gameBoard[i][0] === mark && GameBoard.gameBoard[i][1] === mark && GameBoard.gameBoard[i][2] === mark) {
+            gameOver = true;
+            return { isTie: false, gameOver, mark};
+          }
         }
-
+      
         // Check Columns
-        for (let i = 0; i < 3; i++){
-            if (GameBoard.gameBoard[0][i] === mark && GameBoard.gameBoard[1][i] === mark && GameBoard.gameBoard[2][i] === mark){
-                gameOver = true;
-                return console.log('win');
-                return true;
-            }
+        for (let i = 0; i < 3; i++) {
+          if (GameBoard.gameBoard[0][i] === mark && GameBoard.gameBoard[1][i] === mark && GameBoard.gameBoard[2][i] === mark) {
+            gameOver = true;
+            return { isTie: false, gameOver, mark};
+          }
         }
-
+      
         // Check Diagonals
         if (GameBoard.gameBoard[0][0] === mark && GameBoard.gameBoard[1][1] === mark && GameBoard.gameBoard[2][2] === mark) {
-            gameOver = true;
-            return console.log('win');
-            return true;
+          gameOver = true;
+          return { isTie: false, gameOver, mark};
         }
         if (GameBoard.gameBoard[0][2] === mark && GameBoard.gameBoard[1][1] === mark && GameBoard.gameBoard[2][0] === mark) {
-            gameOver = true;
-            return console.log('win');
-            return true;
+          gameOver = true;
+          return { isTie: false, gameOver, mark};
         }
+      
+        // Check Tie
+        for (let i = 0; i < GameBoard.gameBoard.length; i++) {
+          for (let j = 0; j < GameBoard.gameBoard[i].length; j++) {
+            if (GameBoard.gameBoard[i][j] !== 'X' && GameBoard.gameBoard[i][j] !== 'O') {
+              isTie = false;
+              break;
+            }
+          }
+        }
+      
+        if (isTie) {
+          gameOver = true;
+          return { isTie, gameOver };
+        }
+      
+        return { isTie: false, gameOver };
+      }
 
-        // No win condition met 
-        return false;
+    const checkWin = () => {
+        const gameResult = document.querySelector('.game-over');
+        const promptWin = document.querySelector('.winner');
+        const winResult = winCondition(); // Get the return value of winCondition()
+
+        if (gameOver === true) {
+            gameResult.style.display = 'flex';
+            if (winResult && winResult.isTie === true) { // Access the isTie value from winResult
+                promptWin.textContent = "It's Tie";
+            }
+            else if (winResult.mark === 'X') {
+                promptWin.textContent = "Player X Win !";
+            }
+            else if (winResult.mark === 'O') {
+                promptWin.textContent = "Player O Win !"
+            }
+        } else {
+            gameResult.style.display = 'none';
+        }
+    }
+
+    const resetGame = () => {
+        window.location.reload();
     }
 
     return {
         start,
         switchPlayers,
         updateTurn,
-        checkWin
+        winCondition,
+        checkWin,
+        resetGame
     }
 })();
 
 const startButton = document.querySelector('#start-game');
+const playAgain = document.querySelector('.play-again');
 
 startButton.addEventListener('click', () => {
-        Game.start();
-})
+    Game.start();
+});
+
+playAgain.addEventListener('click', () => {
+    Game.resetGame();
+});
